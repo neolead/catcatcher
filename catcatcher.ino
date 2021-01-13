@@ -69,7 +69,8 @@ void Bluetooth() {
     Serial.println(f);
     }
     
-    if (f>=10){    
+    if (f>=10){   
+      q=0;
       Serial.println("ON");
       Encendida = true;
       digitalWrite(Lampara,HIGH);
