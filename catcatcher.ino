@@ -1,4 +1,6 @@
 #include "BLEDevice.h"
+#include <SimpleTimer.h>
+SimpleTimer timer;
 int Lampara = 33;
 int Contador = 0;
 int q = 0;
@@ -46,6 +48,16 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
       }
     }
 };
+void repeatMe() {
+    Serial.print("Uptime (s): ");
+    Serial.println(millis() / 1000);
+    if ( millis() / 1000 > 3600) {
+      Serial.println("reboot");
+      ESP.restart();
+    }
+      
+    }
+
 void setup() {
   Serial.begin(115200);
   pinMode(Lampara,OUTPUT);
@@ -56,6 +68,8 @@ void setup() {
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true);
   Serial.println("Done");
+  timer.setInterval(1000, repeatMe);
+
 }
 void Bluetooth() {
   Serial.println();
@@ -92,6 +106,8 @@ void Bluetooth() {
     
   }
 }
+
 void loop() { 
   Bluetooth();
+  timer.run();
 }
