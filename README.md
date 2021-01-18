@@ -1,6 +1,10 @@
 Cat food access control..
 ESP-WROOM-32
 
+After start - connect to wifi feed with password feedfeed , open browser http://192.168.4.1
+and set value to run.
+
+
 ```using hc-10 iTag:
 
 1.AT+RENEW Restores factory defaults
