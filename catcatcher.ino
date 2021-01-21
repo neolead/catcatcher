@@ -1,10 +1,11 @@
+// #include <esp_system.h>
 #include "BLEDevice.h"
 #include <Arduino.h>
 #include <WiFi.h>
 #include <AsyncTCP.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
-#include "esp32-hal-cpu.h"
+//#include "esp32-hal-cpu.h"
 static boolean debug = false;
 AsyncWebServer server(80);
 int yourInputInt;
@@ -233,7 +234,7 @@ void inputx(){
 }
 
 void setup() {
-   setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
+  // setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
   Serial.begin(115200);
   if (!SPIFFS.begin(true)) {
     if (debug){Serial.println(F("An Error has occurred while mounting SPIFFS"));}
@@ -334,13 +335,13 @@ void CheckResults() {
     delay(500);
    
     if (deviceNear) {
-      if (blockInt<=1){blockInt=2};
+      if (blockInt<=1){blockInt=2;}
         if (f < blockInt) {
             f = f + 1;
             Serial.print("retry false positive cat exist:");
             Serial.println(f);
         }
-        if (blockInt<=1){blockInt=2};
+        if (blockInt<=1){blockInt=2;}
         if (f >= (blockInt - 1)) {
             if (alr == 1) {
                 Serial.println("do nothing");
