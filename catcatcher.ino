@@ -234,7 +234,7 @@ void inputx(){
 }
 
 void setup() {
-  // setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
+  setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
   Serial.begin(115200);
   if (!SPIFFS.begin(true)) {
     if (debug){Serial.println(F("An Error has occurred while mounting SPIFFS"));}
@@ -278,10 +278,10 @@ void setup() {
       
       int ch = inputMessage.toInt();
       if (ch  < 1) {
-        ch = 4;
+        ch = 7;
       }
       if (ch > 20) {
-        ch = 4;
+        ch = 7;
       }
       String wr = String(ch, DEC);
       writeFile(SPIFFS, "/block.txt", wr.c_str());
@@ -292,10 +292,10 @@ void setup() {
       
       int ch = inputMessage.toInt();
       if (ch  < 1) {
-        ch = 4;
+        ch = 6;
       }
       if (ch > 20) {
-        ch = 4;
+        ch = 6;
       }
       String wr = String(ch, DEC);
       writeFile(SPIFFS, "/unblock.txt", wr.c_str());
@@ -310,9 +310,16 @@ void setup() {
   server.onNotFound(notFound);
   server.begin();
   delay(2000);
-  Serial.println(F("We sleep 85 sec, wait for feeder init"));
-  delay(85000);
-  //WiFi.mode(WIFI_OFF);
+  for (int i = 0; i <= 1; i++) {
+    digitalWrite(relaypin, HIGH);
+    delay (200);
+    digitalWrite(relaypin, LOW);
+    delay (200);
+  }
+  Serial.println(F("We sleep 100 sec, wait for feeder init"));
+//  delay(85000);
+  delay(100000);
+  WiFi.mode(WIFI_OFF);
 
 
   for (int i = 0; i <= 3; i++) {
