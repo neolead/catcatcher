@@ -4,8 +4,9 @@ ESP-WROOM-32
 After start - connect to wifi feed with password feedfeed , open browser http://192.168.4.1
 and set value to run.
 
+```
 As iTAG i use hm-10 with hm-10 firmware .
-command for setup ble iTAG over uart:
+command for setup ble iTAG over uart:```
 
 ```using hc-10 iTag:
 
