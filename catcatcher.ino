@@ -4,7 +4,7 @@
 #include <AsyncTCP.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
-#include <SimpleTimer.h>
+static boolean debug = false;
 
 AsyncWebServer server(80);
 int yourInputInt;
@@ -34,39 +34,37 @@ void notFound(AsyncWebServerRequest *request) {
 }
 
 String readFile(fs::FS &fs, const char * path) {
-  Serial.printf("Reading file: %s\r\n", path);
+  if (debug == true){Serial.printf("Reading file: %s\r\n", path);}
   File file = fs.open(path, "r");
   if (!file || file.isDirectory()) {
-    Serial.println("- empty file or failed to open file");
+    if (debug == true){Serial.println(F("- empty file or failed to open file"));}
     return String();
   }
-  Serial.println("- read from file:");
+  if (debug == true){Serial.println(F("- read from file:"));}
   String fileContent;
   while (file.available()) {
     fileContent += String((char)file.read());
   }
-  Serial.println(fileContent);
+  if (debug == true){Serial.println(fileContent);}
   return fileContent;
 }
 
 void writeFile(fs::FS &fs, const char * path, const char * message) {
-  Serial.printf("Writing file: %s\r\n", path);
+  if (debug == true){Serial.printf("Writing file: %s\r\n", path);}
   delay(150);
   File file = fs.open(path, "w");
   if (!file) {
-    Serial.println("- failed to open file for writing");
+    if (debug == true){Serial.println(F("- failed to open file for writing"));}
     return;
   }
   if (file.print(message)) {
-    Serial.println("- file written");
+    if (debug == true){Serial.println(F("- file written"));}
   } else {
-    Serial.println("- write failed");
+    if (debug == true){Serial.println(F("- write failed"));}
   }
 }
 
-// Replaces placeholder with stored values
 String processor(const String& var) {
-  //Serial.println(var);
   if (var == "inputInt") {
     return readFile(SPIFFS, "/inputInt.txt");
   }
@@ -74,7 +72,6 @@ String processor(const String& var) {
 }
 
 
-SimpleTimer timer;
 int Lampara = 33;
 int alr = 0;
 int Contador = 0;
@@ -95,19 +92,20 @@ bool Encendida = false;
 bool BotonOff = false;
 String knownAddresses[] = { "88:4a:ea:3b:65:6f"};
 unsigned long entry;
+
 static void notifyCallback(
   BLERemoteCharacteristic* pBLERemoteCharacteristic,
   uint8_t* pData,
   size_t length,
   bool isNotify) {
-  Serial.print("Notify callback for characteristic ");
-  Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());
-  Serial.print(" of data length ");
-  Serial.println(length);
+  if (debug == true){Serial.print("Notify callback for characteristic ");}
+  if (debug == true){Serial.print(pBLERemoteCharacteristic->getUUID().toString().c_str());}
+  if (debug == true){Serial.print(" of data length ");}
+  if (debug == true){Serial.println(F(length));}
 }
 class MyClientCallback : public BLEClientCallbacks {
     void onConnect(BLEClient* pclient) {
-      Serial.println("Verbunden");
+      if (debug == true){Serial.println(F("Verbunden"));}
       Verbunden = true;
       Verbinde = false;
     }
@@ -116,14 +114,12 @@ class MyClientCallback : public BLEClientCallbacks {
       Verbunden = false;
       Verbinde = false;
       Suche = true;
-      Serial.println("Verbindung verloren");
+      if (debug == true){Serial.println(F("Verbindung verloren"));}
     }
 };
 
 class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
     void onResult(BLEAdvertisedDevice Device) {
-      //Serial.print("BLE Advertised Device found: "); //
-      //Serial.println(Device.toString().c_str());//
       pServerAddress = new BLEAddress(Device.getAddress());
       bool known = false;
       bool Master = false;
@@ -132,8 +128,8 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
           known = true;
       }
       if (known) {
-        Serial.print("CAT IS FOUND: ");
-        Serial.println(Device.getRSSI());
+        if (debug == true){Serial.print(F("CAT IS FOUND: "));}
+        if (debug == true){Serial.println(F(Device.getRSSI()));}
         if (Device.getRSSI() > yourInputInt) {
           deviceFound = true;
         }
@@ -145,15 +141,6 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
       }
     }
 };
-void repeatMe() {
-  Serial.print("Uptime (s): ");
-  Serial.println(millis() / 1000);
-  if ( millis() / 1000 > 3600) {
-    Serial.println("reboot");
-    ESP.restart();
-  }
-
-}
 
 
 void Forw(int u) {
@@ -183,13 +170,12 @@ void Backw(int t) {
 void setup() {
   Serial.begin(115200);
   if (!SPIFFS.begin(true)) {
-    Serial.println("An Error has occurred while mounting SPIFFS");
+    if (debug == true){Serial.println(F("An Error has occurred while mounting SPIFFS"));}
     return;
   }
   WiFi.softAP(ssid, password);
-  Serial.println();
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
+  if (debug == true){Serial.println(F("IP Address: "));}
+  if (debug == true){Serial.println(F(WiFi.localIP());}
   pinMode(motorpin1, OUTPUT);
   pinMode(motorpin2, OUTPUT);
   pinMode(motoren, OUTPUT);
@@ -221,13 +207,16 @@ void setup() {
     else {
       inputMessage = "No message sent";
     }
-    Serial.println(inputMessage);
+    if (debug == true){Serial.println(F(inputMessage));}
     request->send(200, "text/text", inputMessage);
   });
   server.onNotFound(notFound);
   server.begin();
-  Serial.println("we sleep 85");
+  Serial.println(F("we sleep 85"));
   delay(85000);
+  WiFi.mode(WIFI_OFF);
+
+
   for (int i = 0; i <= 3; i++) {
     digitalWrite(relaypin, HIGH);
     delay (200);
@@ -240,14 +229,12 @@ void setup() {
   pBLEScan = BLEDevice::getScan();
   pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
   pBLEScan->setActiveScan(true);
-  Serial.println("Done");
-  timer.setInterval(1000, repeatMe);
+  if (debug == true){Serial.println(F("Done"));}
 
 }
 
 void Bluetooth() {
-  Serial.println();
-  Serial.println("BLE Scan restarted.....");
+  Serial.println(F("BLE Scan restarted....."));
   deviceFound = false;
   delay (500);
   BLEScanResults scanResults = pBLEScan->start(5);
@@ -255,22 +242,23 @@ void Bluetooth() {
   if (deviceFound) {
     if (f < 7) {
       f = f + 1;
-      Serial.print("retry false positive cat exist:");
-      Serial.println(f);
+      if (debug == true){
+        Serial.print(F("retry false positive cat exist:"));
+        Serial.print(f);
+        }
     }
 
     if (f >= 6) {
 
       if (alr == 1) {
-        Serial.println("do nothing");
+        if (debug == true){Serial.println(F("do nothing"));}
         delay(1000);
 
       }
       if (alr == 0) {
         q = 0;
-        Serial.println("ON");
+        if (debug == true){Serial.println(F("ON"));}
         Encendida = true;
-        //      digitalWrite(Lampara,HIGH);
         Backw(25000);
         alr = 1;
 
@@ -282,10 +270,10 @@ void Bluetooth() {
   else {
     if (alr == 1) {
       q = q + 1;
-      Serial.print("retry false negative - cat is gone - n:");
-      Serial.println(q);
+      if (debug == true){Serial.println(F("retry false negative - cat is gone - n:"));}
+      if (debug == true){Serial.println(F(q));}
       if (q == 6) {
-        Serial.println("OFF");
+        if (debug == true){Serial.println(F("OFF"));}
         //    digitalWrite(Lampara,LOW);
         Forw(25000);
         delay(1000);
@@ -313,9 +301,8 @@ void loop() {
     writeFile(SPIFFS, "/inputInt.txt", defaultrssi);
   }
   delay(100);
-  Serial.print("*** Your inputInt: ");
-  Serial.println(yourInputInt);
+  if (debug == true){Serial.print(F("*** Your inputInt: "));}
+  if (debug == true){Serial.println(F(yourInputInt));}
   Bluetooth();
 
-   //timer.run();
 }
