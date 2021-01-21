@@ -4,6 +4,7 @@
 #include <AsyncTCP.h>
 #include <SPIFFS.h>
 #include <ESPAsyncWebServer.h>
+#include "esp32-hal-cpu.h"
 static boolean debug = false;
 
 AsyncWebServer server(80);
@@ -168,6 +169,7 @@ void Backw(int t) {
 }
 
 void setup() {
+  setCpuFrequencyMhz(80); //Set CPU clock to 80MHz fo example
   Serial.begin(115200);
   if (!SPIFFS.begin(true)) {
     if (debug == true){Serial.println(F("An Error has occurred while mounting SPIFFS"));}
@@ -175,7 +177,7 @@ void setup() {
   }
   WiFi.softAP(ssid, password);
   if (debug == true){Serial.println(F("IP Address: "));}
-  if (debug == true){Serial.println(F(WiFi.localIP());}
+  if (debug == true){ Serial.println(WiFi.localIP() ) ;}
   pinMode(motorpin1, OUTPUT);
   pinMode(motorpin2, OUTPUT);
   pinMode(motoren, OUTPUT);
@@ -207,7 +209,7 @@ void setup() {
     else {
       inputMessage = "No message sent";
     }
-    if (debug == true){Serial.println(F(inputMessage));}
+    if (debug == true){Serial.println(inputMessage);}
     request->send(200, "text/text", inputMessage);
   });
   server.onNotFound(notFound);
