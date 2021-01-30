@@ -4,7 +4,7 @@ ESP-WROOM-32
 After start - connect to wifi feed with password feedfeed , open browser http://192.168.4.1
 and set value to run.
 
-![caption](https://i.imgur.com/ICx4iOT.gifv)
+![caption](https://imgur.com/ICx4iOT)
 
 ```
 As iTAG i use hm-10 with hm-10 firmware .
