@@ -1,5 +1,7 @@
-Cat food access control..
-ESP-WROOM-32
+Bluetooth (BLE) Cat food access control..
+based on ESP-WROOM-32
+
+Blacklist of single cat, with ble beacon.
 
 After start - connect to wifi feed with password feedfeed , open browser http://192.168.4.1
 and set value to run.
