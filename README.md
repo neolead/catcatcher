@@ -5,7 +5,9 @@ After start - connect to wifi feed with password feedfeed , open browser http://
 and set value to run.
 
 
-![Alt text](vid (1).gif) / ![](vid (1).gif)
+![Alt Text](https://github.com/neolead/catcatcher/raw/main/vid%20(1).gif)
+
+
 
 ```
 As iTAG i use hm-10 with hm-10 firmware .
