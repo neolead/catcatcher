@@ -4,7 +4,8 @@ ESP-WROOM-32
 After start - connect to wifi feed with password feedfeed , open browser http://192.168.4.1
 and set value to run.
 
-![caption](vid (1).gif)
+
+![Alt text](vid (1).gif) / ![](vid (1).gif)
 
 ```
 As iTAG i use hm-10 with hm-10 firmware .
